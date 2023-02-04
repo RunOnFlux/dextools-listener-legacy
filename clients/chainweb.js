@@ -36,6 +36,7 @@ class ChainwebUpdateClient {
         });
       return relevantTransactions;
     } catch(e) {
+      console.log(e)
       console.log(`Failed payload call, ${e} Retry: ${retry + 1}`)
       return this.getRelevantTransactions(chain, payloadHash, retry + 1);
     }
