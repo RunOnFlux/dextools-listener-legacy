@@ -51,10 +51,19 @@ jobs:
             PREV=$(sudo docker ps -lq)
             echo "PULL NEW ID"
             sudo docker pull ${{vars.ECR_REGISTRY}}/${{vars.ECR_REPOSITORY}}:${{github.sha}}
-            echo "run new docker image"
-            sudo docker run -d --env-file env.list ${{vars.ECR_REGISTRY}}/${{vars.ECR_REPOSITORY}}:${{github.sha}}
-            echo "stop previous image"
-            sudo docker stop $PREV
-            echo "remove prev image"
-            sudo docker rm $PREV
+
+            echo "stop listener_one"
+            sudo docker stop listener_one
+            echo "remove listener_one"
+            sudo docker rm listener_one
+            echo "run new docker image with listener_one"
+            sudo docker run --name listener_one -d --env-file env.list ${{vars.ECR_REGISTRY}}/${{vars.ECR_REPOSITORY}}:${{github.sha}}
+
+            sleep 5 
+            echo "stop listener_two"
+            sudo docker stop listener_two
+            echo "remove listener_two"
+            sudo docker rm listener_two
+            echo "run new docker image with listener_two"
+            sudo docker run --name listener_two -d --env-file env.list ${{vars.ECR_REGISTRY}}/${{vars.ECR_REPOSITORY}}:${{github.sha}}
           '
