@@ -44,6 +44,7 @@ jobs:
         run: |
           echo "$PRIVATE_KEY" > private_key.pem && chmod 600 private_key.pem
           export NEW_IMAGE=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          echo $ECR_REPOSITORY
           ssh -o StrictHostKeyChecking=no -i private_key.pem ${USER_NAME}@${HOSTNAME} '
 
             #Now we have got the access of EC2 and we will start the deploy .
@@ -51,7 +52,7 @@ jobs:
             echo "GETTING PREV IMAGE ID"
             PREV=$(sudo docker ps -lq)
             echo "PULL NEW ID"
-            echo ${NEW_IMAGE}
+            echo "$NEW_IMAGE"
             # sudo docker pull $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
             # echo "run new docker image"
             # sudo docker run -d --env-file env.list $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
