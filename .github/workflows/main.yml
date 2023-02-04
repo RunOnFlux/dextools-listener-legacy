@@ -10,21 +10,41 @@ jobs:
     name: deploy
     runs-on: ubuntu-latest
     steps:
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-      - name: Login to DockerHub
-        uses: docker/login-action@v2
+      - name: Check out code
+        uses: actions/checkout@v2
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-      - name: Build and push
-        uses: docker/build-push-action@v3
-        with:
-          push: true
-          tags: kadefi/price-server:latest
-          build-args: |
-            PGHOST=${{ secrets.PGHOST }}
-            PGDATABASE=${{ secrets.PGDATABASE }}
-            PGPASSWORD=${{ secrets.PGPASSWORD }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Build, tag, and push image to Amazon ECR
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: dextools-listener
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+      # - name: Deploy in EC2
+      #   env:
+      #     PRIVATE_KEY: ${{ secrets.AWS_PRIVATE_KEY  }}
+      #     HOSTNAME: ${{ secrets.HOSTNAME  }}
+      #     USER_NAME: ${{ secrets.USER_NAME  }}
+
+      #   run: |
+      #     echo "$PRIVATE_KEY" > private_key && chmod 600 private_key
+      #     ssh -o StrictHostKeyChecking=no -i private_key ${USER_NAME}@${HOSTNAME} '
+
+      #       #Now we have got the access of EC2 and we will start the deploy .
+      #       cd /home/ubuntu/CounterApp &&
+      #       git checkout master &&
+      #       git fetch --all &&
+      #       git reset --hard origin/master &&
+      #       git pull origin master &&
+      #       docker-compose -f docker-compose.prod.yml up -d --build
