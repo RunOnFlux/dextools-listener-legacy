@@ -37,10 +37,11 @@ class ChainwebUpdateClient {
       return relevantTransactions;
     } catch(e) {
       if (axios.default.isAxiosError(e)) {
-        console.log(`Failed payload call, ${e.response.data} Retry: ${retry + 1}`);
+        console.log(`Failed payload call, ${e.response.data.reason} Retry: ${retry + 1}`);
       } else {
         console.log(`Failed payload call, ${e} Retry: ${retry + 1}`)
       }
+      await new Promise(r => setTimeout(r, 2000));
       return this.getRelevantTransactions(chain, payloadHash, retry + 1);
     }
   }
