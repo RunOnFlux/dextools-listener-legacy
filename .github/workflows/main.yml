@@ -37,14 +37,14 @@ jobs:
           PRIVATE_KEY: ${{ secrets.AWS_PRIVATE_KEY  }}
           HOSTNAME: ${{ secrets.HOSTNAME }}
           USER_NAME: ${{ secrets.USER_NAME }}
-          ECR_REGISTRY: ${{ secrets.ECR_REGISTRY }}
+          ECR_REGISTRY: 283169336544.dkr.ecr.us-east-1.amazonaws.com
           ECR_REPOSITORY: dextools-listener
           IMAGE_TAG: ${{ github.sha }}
 
         run: |
           echo "$PRIVATE_KEY" > private_key.pem && chmod 600 private_key.pem
           export NEW_IMAGE=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          echo $ECR_REPOSITORY
+          echo $NEW_IMAGE
           ssh -o StrictHostKeyChecking=no -i private_key.pem ${USER_NAME}@${HOSTNAME} '
 
             #Now we have got the access of EC2 and we will start the deploy .
