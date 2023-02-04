@@ -52,7 +52,7 @@ jobs:
             echo "GETTING PREV IMAGE ID"
             PREV=$(sudo docker ps -lq)
             echo "PULL NEW ID"
-            echo "$NEW_IMAGE"
+            echo $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
             # sudo docker pull $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
             # echo "run new docker image"
             # sudo docker run -d --env-file env.list $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
