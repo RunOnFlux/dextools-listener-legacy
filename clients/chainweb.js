@@ -3,7 +3,7 @@ const EventSource = require("eventsource");
 const axiosRetry = require("axios-retry")
 axiosRetry(axios, { retries: 3, retryDelay: axiosRetry.exponentialDelay });
 
-const HOST = process.env.CHAINWEB_HOST || "https://chainweb.kaddex.com"
+const HOST = process.env.CHAINWEB_HOST || "https://chainweb.ecko.finance"
 
 const UPDATES_URL =
   `${HOST}/chainweb/0.0/mainnet01/header/updates`;
